@@ -50,6 +50,7 @@ if st.button("إنشاء حساب جديد"):
             "email": email,
             "points": 0,
             "last_answer_date": "",
+            "last_points_update": "",  # ✅ Track when points were last awarded
             "correct_answer": False
         })
 
@@ -74,6 +75,7 @@ if 'user' in st.session_state:
         user_data = user_doc.to_dict()
         st.session_state.points = user_data.get("points", 0)
         last_answer_date = user_data.get("last_answer_date", "")
+        last_points_update = user_data.get("last_points_update", "")
         st.session_state.correct_answer = user_data.get("correct_answer", False)
 
         # Ensure email is stored
@@ -90,6 +92,7 @@ if 'user' in st.session_state:
             "email": st.session_state.email, 
             "points": 0, 
             "last_answer_date": "", 
+            "last_points_update": "",
             "correct_answer": False
         })
         st.session_state.points = 0
@@ -109,16 +112,11 @@ if 'user' in st.session_state:
             is_correct = selected_option == today_riddle["answer"]
             
             if is_correct:
-                # Mark as correct answer
-                user_ref.update({
-                    "correct_answer": True
-                })
+                user_ref.update({"correct_answer": True})
 
             st.session_state.answered_today = True
             st.session_state.correct_answer = is_correct
-            user_ref.update({
-                "last_answer_date": today_date
-            })
+            user_ref.update({"last_answer_date": today_date})
             st.rerun()
 
     # 🏆 **Leaderboard (Only Correct Answers)**
@@ -127,31 +125,34 @@ if 'user' in st.session_state:
         .order_by("points", direction=firestore.Query.DESCENDING)\
         .limit(3)
 
-    # **🔥 FIXED ERROR: Fetch top users correctly**
     top_users = []
     for doc in users_ref.stream():
         data = doc.to_dict()
         top_users.append({
-            "uid": doc.id,  # 🔥 Fix: Use `doc.id` instead of `user["uid"]`
+            "uid": doc.id,  
             "email": data.get("email", "غير معروف"), 
-            "points": data.get("points", 0)
+            "points": data.get("points", 0),
+            "last_points_update": data.get("last_points_update", "")
         })
     
-    # Award points to top 3 correct answers
+    # Award points **only once per day**
+    today_date = datetime.date.today().isoformat()
     for idx, user in enumerate(top_users):
-        if idx == 0:
-            points_to_add = 15
-        elif idx == 1:
-            points_to_add = 10
-        elif idx == 2:
-            points_to_add = 5
-        else:
-            points_to_add = 0
+        if user["last_points_update"] != today_date:  # ✅ Prevent multiple updates
+            if idx == 0:
+                points_to_add = 15
+            elif idx == 1:
+                points_to_add = 10
+            elif idx == 2:
+                points_to_add = 5
+            else:
+                points_to_add = 0
 
-        user_ref = db.collection("users").document(user["uid"])
-        user_ref.update({
-            "points": firestore.Increment(points_to_add)
-        })
+            user_ref = db.collection("users").document(user["uid"])
+            user_ref.update({
+                "points": firestore.Increment(points_to_add),
+                "last_points_update": today_date  # ✅ Mark points update date
+            })
 
     # Function to get the rank of the current user (Only if correct)
     def get_user_rank():
