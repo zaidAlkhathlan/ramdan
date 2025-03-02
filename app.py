@@ -4,12 +4,11 @@ import random
 import datetime
 import firebase_admin
 from firebase_admin import auth, credentials, firestore, exceptions
-
-
+import json
 
 # Firebase setup (Replace with actual Firebase credentials JSON file)
 if not firebase_admin._apps:
-    cred = credentials.Certificate(dict(st.secrets["firebase"]))
+    cred = credentials.Certificate(json.loads(st.secrets["firebase"].to_json()))
     firebase_admin.initialize_app(cred)
 
 # Initialize Firestore
@@ -51,7 +50,7 @@ if 'user' in st.session_state:
     # Get today's riddle (Rotate based on day)
     today_index = datetime.date.today().day % len(RIDDLES)
     today_riddle = RIDDLES[today_index]
-    
+
     # Retrieve user points from Firestore
     user_ref = db.collection("users").document(st.session_state.user)
     user_doc = user_ref.get()
@@ -64,24 +63,28 @@ if 'user' in st.session_state:
         st.session_state.points = 0
         st.session_state.answered_today = False
 
-    st.write("### فزورة اليوم:")
-    st.write(today_riddle["question"])
-
-    # Display MCQ options
-    selected_option = st.radio("اختر إجابة:", today_riddle["options"])
-
-    # Answer submission
+    # If user hasn't answered yet, show the question
     if not st.session_state.answered_today:
+        st.write("### فزورة اليوم:")
+        st.write(today_riddle["question"])
+
+        # Display MCQ options
+        selected_option = st.radio("اختر إجابة:", today_riddle["options"])
+
+        # Answer submission
         if st.button("تحقق من الإجابة"):
             if selected_option == today_riddle["answer"]:
                 st.success("🎉 إجابة صحيحة! +10 نقاط")
                 st.session_state.points += 10
             else:
                 st.error("❌ إجابة خاطئة، حاول مرة أخرى غدًا!")
+            
+            # Mark as answered and update Firestore
             st.session_state.answered_today = True
             user_ref.update({"points": st.session_state.points, "answered_today": True})
+            st.rerun()  # 🔄 Refresh the app to remove the question
     else:
-        st.warning("لقد أجبت على فزورة اليوم بالفعل، عد غدًا لفزورة جديدة!")
+        st.warning("✅ لقد أجبت على فزورة اليوم بالفعل، عد غدًا لفزورة جديدة!")
 
     # Leaderboard
     st.write("### نقاطك الحالية: ", st.session_state.points)
