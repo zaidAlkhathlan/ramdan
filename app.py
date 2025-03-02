@@ -127,7 +127,15 @@ if 'user' in st.session_state:
         .order_by("points", direction=firestore.Query.DESCENDING)\
         .limit(3)
 
-    top_users = [doc.to_dict() for doc in users_ref.stream()]
+    # **🔥 FIXED ERROR: Fetch top users correctly**
+    top_users = []
+    for doc in users_ref.stream():
+        data = doc.to_dict()
+        top_users.append({
+            "uid": doc.id,  # 🔥 Fix: Use `doc.id` instead of `user["uid"]`
+            "email": data.get("email", "غير معروف"), 
+            "points": data.get("points", 0)
+        })
     
     # Award points to top 3 correct answers
     for idx, user in enumerate(top_users):
@@ -166,7 +174,11 @@ if 'user' in st.session_state:
     leaderboard = []
     user_rank = get_user_rank()
     for idx, user in enumerate(top_users, start=1):
-        leaderboard.append({"المركز": idx, "البريد الإلكتروني": user.get("email", "غير معروف"), "النقاط": user["points"]})
+        leaderboard.append({
+            "المركز": idx, 
+            "البريد الإلكتروني": user.get("email", "غير معروف"), 
+            "النقاط": user["points"]
+        })
 
     # Display leaderboard
     df_leaderboard = pd.DataFrame(leaderboard)
