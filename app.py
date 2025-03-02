@@ -29,6 +29,7 @@ if st.button("تسجيل الدخول"):
     try:
         user = auth.get_user_by_email(email)
         st.session_state.user = user.uid
+        st.session_state.email = email  # Save email in session
         st.success("✅ تم تسجيل الدخول بنجاح!")
     except exceptions.NotFoundError:
         st.error("❌ البريد الإلكتروني غير مسجل. الرجاء إنشاء حساب جديد.")
@@ -37,6 +38,7 @@ if st.button("إنشاء حساب جديد"):
     try:
         user = auth.create_user(email=email, password=password)
         st.session_state.user = user.uid
+        st.session_state.email = email  # Save email in session
         db.collection("users").document(user.uid).set({
             "email": email,  # Ensure email is stored
             "points": 0,
@@ -66,17 +68,24 @@ if 'user' in st.session_state:
         st.session_state.correct_answer = user_data.get("correct_answer", None)
 
         # **Ensure the email field exists**
-        st.session_state.email = user_data.get("email", "مجهول")
+        if "email" in user_data:
+            st.session_state.email = user_data["email"]
+        else:
+            db.collection("users").document(st.session_state.user).update({"email": st.session_state.email})
 
         # Check if user has answered today
         today_date = datetime.date.today().isoformat()
         st.session_state.answered_today = (last_answer_date == today_date)
     else:
-        user_ref.set({"email": email, "points": 0, "last_answer_date": "", "correct_answer": None})
+        user_ref.set({
+            "email": st.session_state.email, 
+            "points": 0, 
+            "last_answer_date": "", 
+            "correct_answer": None
+        })
         st.session_state.points = 0
         st.session_state.answered_today = False
         st.session_state.correct_answer = None
-        st.session_state.email = email  # Ensure email is stored
 
     # If user has not answered today, show the question
     if not st.session_state.answered_today:
@@ -123,14 +132,15 @@ if 'user' in st.session_state:
         data = doc.to_dict()
 
         # **Ensure 'email' field exists, otherwise default to "مجهول"**
-        email_display = data.get("email", "مجهول")
+        email_display = data.get("email", f"مجهول_{idx}")
 
         leaderboard.append({"المركز": idx, "البريد الإلكتروني": email_display, "النقاط": data["points"]})
         if doc.id == st.session_state.user:
             user_rank = idx  # Store logged-in user's position
 
-    # Display leaderboard
+    # Display leaderboard correctly indexed
     df_leaderboard = pd.DataFrame(leaderboard)
+    df_leaderboard.index += 1  # Ensure correct rank display
     st.table(df_leaderboard)
 
     # 🔹 **User Rank**
