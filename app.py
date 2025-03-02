@@ -29,11 +29,14 @@ if st.button("تسجيل الدخول"):
     try:
         user = auth.get_user_by_email(email)
         st.session_state.user = user.uid
-        st.session_state.email = email  # Store email in session
+        st.session_state.email = user.email  # Ensure email is stored
 
-        # Ensure the email is stored in Firestore
+        # DEBUG: Print user info to verify email
+        print(f"✅ Logged in User: {user.uid}, Email: {user.email}")
+
+        # Store email in Firestore if missing
         user_ref = db.collection("users").document(user.uid)
-        user_ref.set({"email": email}, merge=True)
+        user_ref.set({"email": user.email}, merge=True)
 
         st.success("✅ تم تسجيل الدخول بنجاح!")
     except exceptions.NotFoundError:
