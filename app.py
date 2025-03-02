@@ -7,7 +7,8 @@ from firebase_admin import auth, credentials, firestore, exceptions
 
 # Firebase setup (Replace with actual Firebase credentials JSON file)
 if not firebase_admin._apps:
-    cred = credentials.Certificate("ramdan-a6598-firebase-adminsdk-fbsvc-f395cce4ba.json")
+    firebase_secrets = json.loads(st.secrets["firebase"])
+    cred = credentials.Certificate(firebase_secrets)
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
