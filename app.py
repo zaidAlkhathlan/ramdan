@@ -30,6 +30,11 @@ if st.button("تسجيل الدخول"):
         user = auth.get_user_by_email(email)
         st.session_state.user = user.uid
         st.session_state.email = email  # Save email in session
+
+        # Ensure email is stored in Firestore
+        user_ref = db.collection("users").document(user.uid)
+        user_ref.update({"email": email}, merge=True)
+
         st.success("✅ تم تسجيل الدخول بنجاح!")
     except exceptions.NotFoundError:
         st.error("❌ البريد الإلكتروني غير مسجل. الرجاء إنشاء حساب جديد.")
@@ -39,12 +44,15 @@ if st.button("إنشاء حساب جديد"):
         user = auth.create_user(email=email, password=password)
         st.session_state.user = user.uid
         st.session_state.email = email  # Save email in session
+
+        # Store user data in Firestore
         db.collection("users").document(user.uid).set({
-            "email": email,  # Ensure email is stored
+            "email": email,
             "points": 0,
             "last_answer_date": "",
             "correct_answer": None
         })
+
         st.success("🎉 تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.")
     except exceptions.FirebaseError as e:
         st.error(f"❌ خطأ في إنشاء الحساب: {e}")
@@ -60,18 +68,18 @@ if 'user' in st.session_state:
     # Retrieve user data from Firestore
     user_ref = db.collection("users").document(st.session_state.user)
     user_doc = user_ref.get()
-    
+
     if user_doc.exists:
         user_data = user_doc.to_dict()
         st.session_state.points = user_data.get("points", 0)
         last_answer_date = user_data.get("last_answer_date", "")
         st.session_state.correct_answer = user_data.get("correct_answer", None)
 
-        # **Ensure the email field exists**
+        # Ensure email exists in session
         if "email" in user_data:
             st.session_state.email = user_data["email"]
         else:
-            db.collection("users").document(st.session_state.user).update({"email": st.session_state.email})
+            user_ref.update({"email": st.session_state.email}, merge=True)
 
         # Check if user has answered today
         today_date = datetime.date.today().isoformat()
