@@ -37,7 +37,12 @@ if st.button("إنشاء حساب جديد"):
     try:
         user = auth.create_user(email=email, password=password)
         st.session_state.user = user.uid
-        db.collection("users").document(user.uid).set({"email": email, "points": 0, "last_answer_date": "", "correct_answer": None})
+        db.collection("users").document(user.uid).set({
+            "email": email,  # Ensure email is stored
+            "points": 0,
+            "last_answer_date": "",
+            "correct_answer": None
+        })
         st.success("🎉 تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.")
     except exceptions.FirebaseError as e:
         st.error(f"❌ خطأ في إنشاء الحساب: {e}")
@@ -60,6 +65,9 @@ if 'user' in st.session_state:
         last_answer_date = user_data.get("last_answer_date", "")
         st.session_state.correct_answer = user_data.get("correct_answer", None)
 
+        # **Ensure the email field exists**
+        st.session_state.email = user_data.get("email", "مجهول")
+
         # Check if user has answered today
         today_date = datetime.date.today().isoformat()
         st.session_state.answered_today = (last_answer_date == today_date)
@@ -68,6 +76,7 @@ if 'user' in st.session_state:
         st.session_state.points = 0
         st.session_state.answered_today = False
         st.session_state.correct_answer = None
+        st.session_state.email = email  # Ensure email is stored
 
     # If user has not answered today, show the question
     if not st.session_state.answered_today:
@@ -112,7 +121,11 @@ if 'user' in st.session_state:
     user_rank = None
     for idx, doc in enumerate(users, start=1):
         data = doc.to_dict()
-        leaderboard.append({"المركز": idx, "البريد الإلكتروني": data["email"], "النقاط": data["points"]})
+
+        # **Ensure 'email' field exists, otherwise default to "مجهول"**
+        email_display = data.get("email", "مجهول")
+
+        leaderboard.append({"المركز": idx, "البريد الإلكتروني": email_display, "النقاط": data["points"]})
         if doc.id == st.session_state.user:
             user_rank = idx  # Store logged-in user's position
 
