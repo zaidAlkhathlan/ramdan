@@ -10,7 +10,7 @@ def can_show_riddle():
     now = datetime.datetime.now()  # local server time
     st.write(now)
 
-    start_time = now.replace(hour=1, minute=5, second=0, microsecond=0)  # 7:00 PM
+    start_time = now.replace(hour=22, minute=8, second=0, microsecond=0)  # 7:00 PM
     end_time   = now.replace(hour=19, minute=5, second=0, microsecond=0)  # 7:05 PM
     return start_time <= now <= end_time
 
