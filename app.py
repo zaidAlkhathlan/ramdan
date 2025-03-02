@@ -50,7 +50,7 @@ if st.button("إنشاء حساب جديد"):
             "email": email,
             "points": 0,
             "last_answer_date": "",
-            "correct_answer": None
+            "correct_answer": False
         })
 
         st.success("🎉 تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.")
@@ -74,7 +74,7 @@ if 'user' in st.session_state:
         user_data = user_doc.to_dict()
         st.session_state.points = user_data.get("points", 0)
         last_answer_date = user_data.get("last_answer_date", "")
-        st.session_state.correct_answer = user_data.get("correct_answer", None)
+        st.session_state.correct_answer = user_data.get("correct_answer", False)
 
         # Ensure email is stored
         if "email" in user_data:
@@ -90,25 +90,30 @@ if 'user' in st.session_state:
             "email": st.session_state.email, 
             "points": 0, 
             "last_answer_date": "", 
-            "correct_answer": None
+            "correct_answer": False
         })
         st.session_state.points = 0
         st.session_state.answered_today = False
-        st.session_state.correct_answer = None
+        st.session_state.correct_answer = False
 
-    # 🏆 **Leaderboard (Get top 3 users)**
-    users_ref = db.collection("users").order_by("points", direction=firestore.Query.DESCENDING).limit(3)
-    users = users_ref.stream()
+    # 🏆 **Leaderboard (Only Correct Answers)**
+    users_ref = db.collection("users")\
+        .where("correct_answer", "==", True)\
+        .order_by("points", direction=firestore.Query.DESCENDING)\
+        .limit(3)
 
     top_users = []
-    for idx, doc in enumerate(users, start=1):
+    for idx, doc in enumerate(users_ref.stream(), start=1):
         data = doc.to_dict()
         email_display = data.get("email", f"غير معروف_{idx}")
         top_users.append({"rank": idx, "uid": doc.id, "email": email_display, "points": data["points"]})
 
-    # Function to get the rank of the current user
+    # Function to get the rank of the current user (Only if correct)
     def get_user_rank():
-        all_users_ref = db.collection("users").order_by("points", direction=firestore.Query.DESCENDING)
+        all_users_ref = db.collection("users")\
+            .where("correct_answer", "==", True)\
+            .order_by("points", direction=firestore.Query.DESCENDING)
+
         all_users = all_users_ref.stream()
         for idx, doc in enumerate(all_users, start=1):
             if doc.id == st.session_state.user:
@@ -164,7 +169,7 @@ if 'user' in st.session_state:
     # Show user's points
     st.write("### نقاطك الحالية: ", st.session_state.points)
 
-    # 🏆 **Leaderboard**
+    # 🏆 **Leaderboard (Only Correct Answers)**
     st.title("🏆 لوحة الصدارة")
 
     leaderboard = []
@@ -177,8 +182,8 @@ if 'user' in st.session_state:
     df_leaderboard.index += 1
     st.table(df_leaderboard)
 
-    # Show user's position
-    if user_rank:
-        st.write(f"📍 **ترتيبك في لوحة الصدارة:** **#{user_rank}** 🎯")
-    else:
-        st.write("😞 لم تصل بعد إلى قائمة أفضل 3 لاعبين، حاول تحسين أدائك!")
+    # Show user's position (Only if they answered correctly)
+    if st.session_state.correct_answer and user_rank:
+        st.write(f"📍 **ترتيبك بين الذين أجابوا بشكل صحيح:** **#{user_rank}** 🎯")
+    elif not st.session_state.correct_answer:
+        st.write("😞 لم تجب على السؤال بشكل صحيح اليوم، حاول مرة أخرى غدًا!")
