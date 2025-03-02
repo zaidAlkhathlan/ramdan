@@ -21,8 +21,8 @@ def can_show_riddle():
     st.write("الوقت الحالي في الرياض:", now.strftime("%Y-%m-%d %H:%M:%S"))
 
     # Define the allowed window: 7:00 PM → 7:05 PM
-    start_time = now.replace(hour=1, minute=14, second=0, microsecond=0)  # 7:00 PM
-    end_time   = now.replace(hour=19, minute=5, second=0, microsecond=0)  # 7:05 PM
+    start_time = now.replace(hour=21, minute=0, second=0, microsecond=0)  # 7:00 PM
+    end_time   = now.replace(hour=21, minute=5, second=0, microsecond=0)  # 7:05 PM
 
     # Debug info: show start/end
     st.write("نافذة البداية:", start_time.strftime("%Y-%m-%d %H:%M:%S"))
