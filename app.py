@@ -4,16 +4,15 @@ import random
 import datetime
 import firebase_admin
 from firebase_admin import auth, credentials, firestore, exceptions
-import json
 
 
 
 # Firebase setup (Replace with actual Firebase credentials JSON file)
 if not firebase_admin._apps:
-    firebase_secrets = json.loads(st.secrets["firebase"])
-    cred = credentials.Certificate(firebase_secrets)
+    cred = credentials.Certificate(dict(st.secrets["firebase"]))
     firebase_admin.initialize_app(cred)
 
+# Initialize Firestore
 db = firestore.client()
 
 # Simulated database (Replace with actual database in production)
