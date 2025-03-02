@@ -31,9 +31,6 @@ if st.button("تسجيل الدخول"):
         st.session_state.user = user.uid
         st.session_state.email = user.email  # Ensure email is stored
 
-        # DEBUG: Print user info to verify email
-        print(f"✅ Logged in User: {user.uid}, Email: {user.email}")
-
         # Store email in Firestore if missing
         user_ref = db.collection("users").document(user.uid)
         user_ref.set({"email": user.email}, merge=True)
@@ -99,6 +96,25 @@ if 'user' in st.session_state:
         st.session_state.answered_today = False
         st.session_state.correct_answer = None
 
+    # 🏆 **Leaderboard (Get top 3 users)**
+    users_ref = db.collection("users").order_by("points", direction=firestore.Query.DESCENDING).limit(3)
+    users = users_ref.stream()
+
+    top_users = []
+    for idx, doc in enumerate(users, start=1):
+        data = doc.to_dict()
+        email_display = data.get("email", f"غير معروف_{idx}")
+        top_users.append({"rank": idx, "uid": doc.id, "email": email_display, "points": data["points"]})
+
+    # Function to get the rank of the current user
+    def get_user_rank():
+        all_users_ref = db.collection("users").order_by("points", direction=firestore.Query.DESCENDING)
+        all_users = all_users_ref.stream()
+        for idx, doc in enumerate(all_users, start=1):
+            if doc.id == st.session_state.user:
+                return idx
+        return None
+
     # Show the riddle if the user hasn't answered today
     if not st.session_state.answered_today:
         st.write("### فزورة اليوم:")
@@ -112,8 +128,20 @@ if 'user' in st.session_state:
             is_correct = selected_option == today_riddle["answer"]
             
             if is_correct:
-                st.success("🎉 إجابة صحيحة! +10 نقاط")
-                st.session_state.points += 10
+                # Determine if the user is in the top 3
+                user_rank = get_user_rank()
+
+                if user_rank == 1:
+                    earned_points = 15
+                elif user_rank == 2:
+                    earned_points = 10
+                elif user_rank == 3:
+                    earned_points = 5
+                else:
+                    earned_points = 0
+
+                st.success(f"🎉 إجابة صحيحة! +{earned_points} نقاط")
+                st.session_state.points += earned_points
             else:
                 st.error("❌ إجابة خاطئة! لن تتمكن من المحاولة مرة أخرى اليوم.")
 
@@ -139,20 +167,10 @@ if 'user' in st.session_state:
     # 🏆 **Leaderboard**
     st.title("🏆 لوحة الصدارة")
 
-    users_ref = db.collection("users").order_by("points", direction=firestore.Query.DESCENDING).limit(10)
-    users = users_ref.stream()
-
     leaderboard = []
-    user_rank = None
-    for idx, doc in enumerate(users, start=1):
-        data = doc.to_dict()
-
-        # Ensure email exists, otherwise show "غير معروف"
-        email_display = data.get("email", f"غير معروف_{idx}")
-
-        leaderboard.append({"المركز": idx, "البريد الإلكتروني": email_display, "النقاط": data["points"]})
-        if doc.id == st.session_state.user:
-            user_rank = idx  # Store user's rank
+    user_rank = get_user_rank()
+    for user in top_users:
+        leaderboard.append({"المركز": user["rank"], "البريد الإلكتروني": user["email"], "النقاط": user["points"]})
 
     # Display leaderboard
     df_leaderboard = pd.DataFrame(leaderboard)
@@ -163,4 +181,4 @@ if 'user' in st.session_state:
     if user_rank:
         st.write(f"📍 **ترتيبك في لوحة الصدارة:** **#{user_rank}** 🎯")
     else:
-        st.write("😞 لم تصل بعد إلى قائمة أفضل 10 لاعبين، حاول تحسين أدائك!")
+        st.write("😞 لم تصل بعد إلى قائمة أفضل 3 لاعبين، حاول تحسين أدائك!")
