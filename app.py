@@ -40,16 +40,12 @@ def can_show_riddle():
     now = datetime.datetime.now(local_tz)
 
     # Debug info: show current local time
-    st.write("الوقت الحالي في الرياض:", now.strftime("%Y-%m-%d %H:%M:%S"))
 
     # Define the allowed window: 7:00 PM → 7:05 PM
     start_time = now.replace(hour=21, minute=0, second=0, microsecond=0)  # 7:00 PM
     end_time   = now.replace(hour=21, minute=5, second=0, microsecond=0)  # 7:05 PM
 
-    # Debug info: show start/end
-    st.write("نافذة البداية:", start_time.strftime("%Y-%m-%d %H:%M:%S"))
-    st.write("نافذة النهاية:", end_time.strftime("%Y-%m-%d %H:%M:%S"))
-
+    
     return start_time <= now <= end_time
 
 ##############################
@@ -189,7 +185,7 @@ if 'uid' in st.session_state:
                     })
 
     else:
-        st.warning("عذرًا! لا يمكنك الإجابة الآن. النافذة الزمنية هي من ٧:٠٠ إلى ٧:٠٥ مساءً.")
+        st.warning("عذرًا! لا يمكنك الإجابة الآن.  سيمكنك الاجابه من ٩:٠٠ إلى ٩:٠٥ مساءً.")
 
     # -----------------------
     #     Leaderboard
