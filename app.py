@@ -5,6 +5,28 @@ import pytz
 import firebase_admin
 from firebase_admin import auth, credentials, firestore, exceptions
 import json
+# Inject custom CSS for RTL
+rtl_css = """
+<style>
+    /* Force RTL direction and right alignment */
+    body {
+        direction: rtl;
+        text-align: right;
+    }
+    /* Also align radio buttons / checkboxes to the right */
+    .streamlit-expanderHeader, .streamlit-radio {
+        direction: rtl;
+        text-align: right;
+    }
+    /* If you use table, set it to RTL, etc. */
+    table, th, td {
+        direction: rtl;
+        text-align: right;
+    }
+</style>
+"""
+st.markdown(rtl_css, unsafe_allow_html=True)
+
 
 ##############################
 #      TIME WINDOW CHECK     #
