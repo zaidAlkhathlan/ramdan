@@ -42,7 +42,7 @@ def can_show_riddle():
     # Debug info: show current local time
 
     # Define the allowed window: 7:00 PM → 7:05 PM
-    start_time = now.replace(hour=20, minute=50, second=0, microsecond=0)  # 7:00 PM
+    start_time = now.replace(hour=21, minute=0, second=0, microsecond=0)  # 7:00 PM
     end_time   = now.replace(hour=21, minute=5, second=0, microsecond=0)  # 7:05 PM
 
     
@@ -62,7 +62,7 @@ db = firestore.client()
 #       SAMPLE RIDDLES       #
 ##############################
 RIDDLES = [
-    {"question": "من افضل ليدر  ؟", "options": ["زيد", "زيد", "زيد", "زيد"], "answer": "زيد"},
+    {"question": "ما هو المفصل الذي يعتبر أكبر مفصل في جسم الإنسان؟", "options": ["مفصل الكتف", "مفصل الورك", "مفصل الركبة", "مفصل الكوع"], "answer": "مفصل الركبة"},
     
 ]
 
@@ -136,7 +136,7 @@ if 'uid' in st.session_state:
 
     # --- Check the time window (7:00–7:05 PM) ---
     if can_show_riddle():
-        st.info("الوقت مفتوح الآن للإجابة: من ٧:٠٠ إلى ٧:٠٥ مساءً.")
+        st.info("الوقت مفتوح الآن للإجابة: من ٩:٠٠ إلى ٩:٠٥ مساءً.")
 
         if answered_date == today_str:
             # User already answered today
