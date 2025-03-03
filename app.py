@@ -42,8 +42,8 @@ def can_show_riddle():
     # Debug info: show current local time
 
     # Define the allowed window: 7:00 PM → 7:05 PM
-    start_time = now.replace(hour=21, minute=0, second=0, microsecond=0)  # 7:00 PM
-    end_time   = now.replace(hour=21, minute=5, second=0, microsecond=0)  # 7:05 PM
+    start_time = now.replace(hour=21, minute=15, second=0, microsecond=0)  # 7:00 PM
+    end_time   = now.replace(hour=21, minute=20, second=0, microsecond=0)  # 7:05 PM
 
     
     return start_time <= now <= end_time
@@ -62,7 +62,7 @@ db = firestore.client()
 #       SAMPLE RIDDLES       #
 ##############################
 RIDDLES = [
-    {"question": "ما هو المفصل الذي يعتبر أكبر مفصل في جسم الإنسان؟", "options": ["مفصل الكتف", "مفصل الورك", "مفصل الركبة", "مفصل الكوع"], "answer": "مفصل الركبة"},
+    {"question": "لدينا 6 بيضات، كُسرت منها اثنتان، وطُبخت اثنتان، وأُكلت اثنتان، كم تبقى من البيض؟", "options": ["6", "2", "4", "0"], "answer": "4"},
     
 ]
 
