@@ -62,7 +62,7 @@ db = firestore.client()
 #       SAMPLE RIDDLES       #
 ##############################
 RIDDLES = [
-    {"question": "من افضل ليدر واحد ؟", "options": ["زيد", "زيد", "زيد", "زيد"], "answer": "زيد"},
+    {"question": "من افضل ليدر  ؟", "options": ["زيد", "زيد", "زيد", "زيد"], "answer": "زيد"},
     
 ]
 
