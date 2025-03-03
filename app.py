@@ -136,7 +136,7 @@ if 'uid' in st.session_state:
 
     # --- Check the time window (7:00–7:05 PM) ---
     if can_show_riddle():
-        st.info("الوقت مفتوح الآن للإجابة: من ٩:٠٠ إلى ٩:٠٥ مساءً.")
+        st.info("الوقت مفتوح الآن للإجابة: من ٩:٣٠ إلى ٩:٣٥ مساءً.")
 
         if answered_date == today_str:
             # User already answered today
@@ -184,7 +184,7 @@ if 'uid' in st.session_state:
                     })
 
     else:
-        st.warning("عذرًا! لا يمكنك الإجابة الآن.  سيمكنك الاجابه من ٩:٠٠ إلى ٩:٠٥ مساءً.")
+        st.warning("عذرًا! لا يمكنك الإجابة الآن.  سيمكنك الاجابه من ٩:٣٠ إلى ٩:٣٥ مساءً.")
 
     # -----------------------
     #     Leaderboard
