@@ -42,8 +42,8 @@ def can_show_riddle():
     # Debug info: show current local time
 
     # Define the allowed window: 7:00 PM → 7:05 PM
-    start_time = now.replace(hour=21, minute=30, second=0, microsecond=0)  # 7:00 PM
-    end_time   = now.replace(hour=21, minute=35, second=0, microsecond=0)  # 7:05 PM
+    start_time = now.replace(hour=21, minute=0, second=0, microsecond=0)  # 7:00 PM
+    end_time   = now.replace(hour=21, minute=5, second=0, microsecond=0)  # 7:05 PM
 
     
     return start_time <= now <= end_time
@@ -62,7 +62,7 @@ db = firestore.client()
 #       SAMPLE RIDDLES       #
 ##############################
 RIDDLES = [
-    {"question": "لدينا 6 بيضات، كُسرت منها اثنتان، وطُبخت اثنتان، وأُكلت اثنتان، كم تبقى من البيض؟", "options": ["6", "2", "4", "0"], "answer": "4"},
+    {"question": "كم عدد السور المكيه في القران الكريم؟", "options": ["85", "88", "87", "90"], "answer": "85"},
     
 ]
 
@@ -136,7 +136,7 @@ if 'uid' in st.session_state:
 
     # --- Check the time window (7:00–7:05 PM) ---
     if can_show_riddle():
-        st.info("الوقت مفتوح الآن للإجابة: من ٩:٣٠ إلى ٩:٣٥ مساءً.")
+        st.info("الوقت مفتوح الآن للإجابة: من ٩:٠٠ إلى ٩:٠٥ مساءً.")
 
         if answered_date == today_str:
             # User already answered today
@@ -184,7 +184,7 @@ if 'uid' in st.session_state:
                     })
 
     else:
-        st.warning("عذرًا! لا يمكنك الإجابة الآن.  سيمكنك الاجابه من ٩:٣٠ إلى ٩:٣٥ مساءً.")
+        st.warning("عذرًا! لا يمكنك الإجابة الآن.  سيمكنك الاجابه من ٩:٠٠ إلى ٩:٠٥ مساءً.")
 
     # -----------------------
     #     Leaderboard
