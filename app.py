@@ -53,7 +53,7 @@ def can_show_riddle():
 ##############################
 if not firebase_admin._apps:
     # Load secrets from Streamlit
-    cred = credentials.Certificate(json.loads(st.secrets["firebase"]))
+    cred = credentials.Certificate(st.secrets["firebase"])
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
