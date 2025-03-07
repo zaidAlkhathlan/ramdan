@@ -36,8 +36,8 @@ def can_show_riddle():
     now = datetime.datetime.now(local_tz)
 
     # Define the allowed window: 9:00 PM → 9:05 PM
-    start_time = now.replace(hour=19, minute=0, second=0, microsecond=0)
-    end_time   = now.replace(hour=19, minute=5, second=0, microsecond=0)
+    start_time = now.replace(hour=18, minute=20, second=0, microsecond=0)
+    end_time   = now.replace(hour=18, minute=26, second=0, microsecond=0)
 
     return start_time <= now <= end_time
 
@@ -57,7 +57,7 @@ db = firestore.client()
 RIDDLE = {
     "question": "كم عدد احفاد يمه نوره الزيد؟",
     "options": ["5 عيال و 8 بنات ", "8 عيال و 5 بنات", "6 عيال و 7 بنات", "7 عيال و 6 بنات"],
-    "answer": "في الجهة الشرقية من الكعبة"
+    "answer": "6 عيال و 7 بنات"
 }
 
 ##############################
@@ -122,7 +122,7 @@ if 'uid' in st.session_state:
     today_str = str(datetime.date.today())
 
     if can_show_riddle():
-        st.info("الوقت مفتوح الآن للإجابة: من ٩:٠٠ إلى ٩:٠٥ مساءً.")
+        st.info("الوقت مفتوح الآن للإجابة: من ٧:٠٠ إلى ٧:٠٥ مساءً.")
 
         if answered_date == today_str:
             st.warning("لقد أجبت اليوم بالفعل! عد غدًا لفزورة جديدة.")
@@ -165,7 +165,7 @@ if 'uid' in st.session_state:
                 st.success(f"🎉 حصلت على {add_points} نقطة إضافية!")
     
     else:
-        st.warning("عذرًا! لا يمكنك الإجابة الآن. سيمكنك الإجابة من ٩:٠٠ إلى ٩:٠٥ مساءً.")
+        st.warning("عذرًا! لا يمكنك الإجابة الآن. سيمكنك الإجابة من ٧:٠٠ إلى ٧:٠٥ مساءً.")
 
     ##############################
     #        LEADERBOARD         #
