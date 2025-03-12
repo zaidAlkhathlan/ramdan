@@ -36,8 +36,8 @@ def can_show_riddle():
     now = datetime.datetime.now(local_tz)
 
     # Define the allowed window: 9:00 PM → 9:05 PM
-    start_time = now.replace(hour=19, minute=5, second=0, microsecond=0)
-    end_time   = now.replace(hour=19, minute=10, second=0, microsecond=0)
+    start_time = now.replace(hour=18, minute=20, second=0, microsecond=0)
+    end_time   = now.replace(hour=18, minute=25, second=0, microsecond=0)
 
     return start_time <= now <= end_time
 
@@ -55,9 +55,9 @@ db = firestore.client()
 ##############################
 # 🎯 Every day, update this section with a new riddle before uploading
 RIDDLE = {
-    "question": "من هو النبي الذي امن به جميع قومه؟",
-    "options": [" موسى عليه السلام", " عيسى عليه السلام", " يونس عليه السلام", " نوح عليه السلام"],
-    "answer": " يونس عليه السلام"
+    "question": "ما هو البحر الاكثر دفئا في العالم؟",
+    "options": ["البحر الأبيض المتوسط", "بحر العرب", "البحر الميت", "البحر الأحمر"],
+    "answer": "البحر الأحمر"
 }
 
 ##############################
