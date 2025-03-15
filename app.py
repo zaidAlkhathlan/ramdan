@@ -55,9 +55,7 @@ db = firestore.client()
 ##############################
 # 🎯 Every day, update this section with a new riddle before uploading
 RIDDLE = {
-    "question": "كم مرة تأهلت السعودية لكأس العالم؟",
-    "options": ["7", "6", "8", "9"],
-    "answer": "6"
+ 
 }
 
 
