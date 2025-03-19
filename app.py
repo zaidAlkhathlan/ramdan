@@ -134,7 +134,7 @@ if 'uid' in st.session_state:
             st.warning("لقد أجبت اليوم بالفعل! عد غدًا لفزورة جديدة.")
         else:
             st.write("### فزورة اليوم:")
-            st.image("ramdan/Screenshot 2025-03-19 at 5.22.31 PM.png", caption="This is an example image", width=400)
+            st.image("Screenshot 2025-03-19 at 5.22.31 PM.png", width=400)
             st.write(RIDDLE["question"])
             chosen = st.radio("اختر الإجابة:", RIDDLE["options"], index=0)
 
