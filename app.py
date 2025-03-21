@@ -56,9 +56,9 @@ db = firestore.client()
 # 🎯 Every day, update this section with a new riddle before uploading
 RIDDLE = {
 
-    "question": "أين توجد مدينة طروادة المشهورة في التاريخ؟",
-     "options": ["اليونان", "إيطاليا", "تركيا", "مصر"],
-     "answer": "تركيا"
+    "question": "ما هو اسم البرج الذي في الصورة؟",
+     "options": ["بنك الراجحي", "المملكة", "المجدول", "الفيصلية"],
+     "answer": "المجدول"
 
  
 }
@@ -134,6 +134,7 @@ if 'uid' in st.session_state:
             st.warning("لقد أجبت اليوم بالفعل! عد غدًا لفزورة جديدة.")
         else:
             st.write("### فزورة اليوم:")
+            st.image("WlWcVh7LKwlGJMaWYxS0KSdyMB32x4LoAeiesapG.webp", width=400)
             st.write(RIDDLE["question"])
             chosen = st.radio("اختر الإجابة:", RIDDLE["options"], index=0)
 
