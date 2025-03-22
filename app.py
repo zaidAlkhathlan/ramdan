@@ -36,8 +36,8 @@ def can_show_riddle():
     now = datetime.datetime.now(local_tz)
 
     # Define the allowed window: 9:00 PM → 9:05 PM
-    start_time = now.replace(hour=19, minute=30, second=0, microsecond=0)
-    end_time   = now.replace(hour=19, minute=35, second=0, microsecond=0)
+    start_time = now.replace(hour=18, minute=26, second=0, microsecond=0)
+    end_time   = now.replace(hour=18, minute=29, second=0, microsecond=0)
 
     return start_time <= now <= end_time
 
@@ -56,9 +56,9 @@ db = firestore.client()
 # 🎯 Every day, update this section with a new riddle before uploading
 RIDDLE = {
 
-    "question": "ما هو اسم البرج الذي في الصورة؟",
-     "options": ["بنك الراجحي", "المملكة", "المجدول", "الفيصلية"],
-     "answer": "المجدول"
+    "question": "ما هي ماركة القلادة التي في الصوره؟",
+     "options": ["cartier", "Swarovski", "Miansai", "Tiffany & Co"],
+     "answer": "Tiffany & Co"
 
  
 }
@@ -134,7 +134,7 @@ if 'uid' in st.session_state:
             st.warning("لقد أجبت اليوم بالفعل! عد غدًا لفزورة جديدة.")
         else:
             st.write("### فزورة اليوم:")
-            st.image("WlWcVh7LKwlGJMaWYxS0KSdyMB32x4LoAeiesapG.webp", width=400)
+            st.image("Screenshot 2025-03-22 at 6.20.11 PM.png", width=400)
             st.write(RIDDLE["question"])
             chosen = st.radio("اختر الإجابة:", RIDDLE["options"], index=0)
 
