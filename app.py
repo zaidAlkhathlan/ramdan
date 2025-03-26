@@ -36,8 +36,8 @@ def can_show_riddle():
     now = datetime.datetime.now(local_tz)
 
     # Define the allowed window: 9:00 PM → 9:05 PM
-    start_time = now.replace(hour=19, minute=0, second=0, microsecond=0)
-    end_time   = now.replace(hour=19, minute=5, second=0, microsecond=0)
+    start_time = now.replace(hour=19, minute=26, second=0, microsecond=0)
+    end_time   = now.replace(hour=19, minute=30, second=0, microsecond=0)
 
     return start_time <= now <= end_time
 
@@ -56,9 +56,9 @@ db = firestore.client()
 # 🎯 Every day, update this section with a new riddle before uploading
 RIDDLE = {
 
-    "question": "كم عدد النجوم في علم امريكا؟",
-     "options": ["55", "40", "60", "50"],
-     "answer": "50"
+    "question": "ما هي أول عاصمة للسعودية؟",
+     "options": ["الرياض", "مكة المكرمة", "الدرعية", "المدينة المنورة"],
+     "answer": "الدرعية"
 
  
 }
