@@ -36,8 +36,8 @@ def can_show_riddle():
     now = datetime.datetime.now(local_tz)
 
     # Define the allowed window: 9:00 PM → 9:05 PM
-    start_time = now.replace(hour=19, minute=24, second=0, microsecond=0)
-    end_time   = now.replace(hour=19, minute=29, second=0, microsecond=0)
+    start_time = now.replace(hour=20, minute=0, second=0, microsecond=0)
+    end_time   = now.replace(hour=20, minute=5, second=0, microsecond=0)
 
     return start_time <= now <= end_time
 
